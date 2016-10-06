@@ -20,5 +20,9 @@ var subdomain = process.env.HARVEST_SUBDOMAIN;
 // Set up the client
 var HarvestClient = require("./harvest_client");
 var client = HarvestClient(email, password, subdomain);
-
 module.exports.client = client;
+
+// Set up Harvey
+var harvey = new Harvey(email, password, subdomain, user_ids);
+module.exports.harvey = harvey;
+
