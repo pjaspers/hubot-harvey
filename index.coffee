@@ -1,31 +1,30 @@
 # Description:
-#   Gives an easy way for a user to get the status of the Freckle
+#   Gives an easy way for a user to get the status of Harvest
 #
 # Dependencies:
-#   freckle
 #   lodash
 #
 # Configuration:
 #   None
 #
 # Commands:
-#   freckle - Display yesterday's Freckle
+#   harvey - Display yesterday's harvest
 #
 # Author:
 #   pjaspers
 
-Checkle = require './checkle'
+Harvey = require './harvey'
 
 attach = (robot, color, date, users) ->
   fields = for user in users
     {short: true, title: user.name, value: user.minutes}
   robot.emit 'slack.attachment',
-    text: "*Freckle for #{date}* :scream_cat:"
+    text: "*Harvest for #{date}* :scream_cat:"
     content:
       color: color
       fields: fields
-    channel: "#general" # optional, defaults to message.room
-    username: "Freckle for #{date}"
+    channel: "#dev" # optional, defaults to message.room
+    username: "Harvest for #{date}"
     icon_url: "http://pile.pjaspers.com/freckle.png"
 
 emote = (robot, msg, data) ->
@@ -41,44 +40,27 @@ displaySummary = (msg, data) ->
     for user in users
       msg.send "  #{user.name} has #{user.minutes}"
 
-
-today = ->
-  new Date()
-
-yesterday = ->
-  date = new Date()
-  date.setDate(date.getDate() - 1)
-  date.setDate(date.getDate() - 1) if date.getDay() == 6
-  date.setDate(date.getDate() - 2) if date.getDay() == 0
-  date
-
 dateRangeFromMessage = (msg) ->
   # Let's assume: dd/mm/YYYY
   dateRegex = /(\d{2})\/(\d{2})\/(\d{2,4})/
   if dateRegex.test(msg)
-    [day, month, year] = dateRegex.match(msg)[1..3]
-    [Date.parse("#{month}/#{day}/#{year}")]
+    DateUtil.rangeForDate(msg)
   else
-    hour = new Date().getHours()
-    if hour < 11
-      [yesterday()]
-    else if hour > 11 && hour < 18
-      [yesterday(), new Date()]
-    else
-      [new Date()]
+    DateUtil.rangeForNow()
 
 module.exports = (robot) ->
-  robot.respond /(status\s)?freckle/i, (msg) ->
-    userIds = process.env.FRECKLE_IDS.split ','
-    token = process.env.FRECKLE_TOKEN
-    subdomain = process.env.FRECKLE_DOMAIN
+  robot.respond /(status\s)?harvest/i, (msg) ->
+    user_ids = process.env.ACTIVE_USER_IDS.split(",")
+    email = process.env.HARVEST_EMAIL
+    password = process.env.HARVEST_PASSWORD
+    subdomain = process.env.HARVEST_SUBDOMAIN
+    harvey = new Harvey(email, password, subdomain, user_ids)
 
-    checkle = new Checkle(token, subdomain, userIds)
     hour = new Date().getHours()
     [startDate, ..., endDate] = dateRangeFromMessage(msg)
     if startDate
-      checkle.minutesPerUserInRange startDate, endDate, (err, data) ->
+      harvey.minutesPerUserInRange startDate, endDate, (err, data) ->
         console.log(data)
         # emote(robot, msg, data)
     else
-      msg.send "You know nothing Jon Snow"
+      msg.send "Don't know what date to fetch"
