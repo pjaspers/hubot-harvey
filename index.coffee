@@ -56,8 +56,9 @@ module.exports = (robot) ->
     subdomain = process.env.HARVEST_SUBDOMAIN
     harvey = new Harvey(email, password, subdomain, user_ids)
 
-    hour = new Date().getHours()
-    [startDate, ..., endDate] = dateRangeFromMessage(msg)
+    range = dateRangeFromMessage(msg)
+    startDate = DateUtils.startDateFromRange(range)
+    endDate = DateUtils.endDateFromRange(range)
     if startDate
       harvey.minutesPerUserInRange startDate, endDate, (err, data) ->
         console.log(data)
