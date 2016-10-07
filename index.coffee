@@ -14,6 +14,7 @@
 #   pjaspers
 
 Harvey = require './harvey'
+DateUtils = require "./date_utils"
 
 attach = (robot, color, date, users) ->
   fields = for user in users
@@ -44,9 +45,9 @@ dateRangeFromMessage = (msg) ->
   # Let's assume: dd/mm/YYYY
   dateRegex = /(\d{2})\/(\d{2})\/(\d{2,4})/
   if dateRegex.test(msg)
-    DateUtil.rangeForDate(msg)
+    DateUtils.rangeForDate(msg)
   else
-    DateUtil.rangeForNow()
+    DateUtils.rangeForNow()
 
 module.exports = (robot) ->
   robot.respond /(status\s)?harvest/i, (msg) ->
