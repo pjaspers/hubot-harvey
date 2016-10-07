@@ -62,6 +62,9 @@ module.exports = (robot) ->
     endDate = DateUtils.endDateFromRange(range)
     if startDate
       harvey.minutesPerUserInRange startDate, endDate, (err, data) ->
-        emote(robot, msg, data)
+        if /\bme\b/.test(msg)
+          console.log(data)
+        else
+          emote(robot, msg, data)
     else
       msg.send "Don't know what date to fetch"
