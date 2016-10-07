@@ -1,6 +1,6 @@
 {
   "name": "hubot-harvey",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A hubot script to get a quick overview of your team's activity on Harvest",
   "main": "index.coffee",
   "repository": {
