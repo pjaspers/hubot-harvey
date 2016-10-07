@@ -64,7 +64,7 @@ module.exports = (robot) ->
     if startDate
       harvey.minutesPerUserInRange startDate, endDate, (err, data) ->
         if /\bme\b/.test(original_message)
-          console.log(data)
+          displaySummary(msg, data)
         else
           emote(robot, msg, data)
     else
