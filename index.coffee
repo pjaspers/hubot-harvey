@@ -50,7 +50,7 @@ dateRangeFromMessage = (msg) ->
     DateUtils.rangeForNow()
 
 module.exports = (robot) ->
-  robot.respond /(status\s)?harvest/i, (msg) ->
+  robot.respond /(status\s)?(harvest|harvey)/i, (msg) ->
     user_ids = process.env.ACTIVE_USER_IDS.split(",")
     email = process.env.HARVEST_EMAIL
     password = process.env.HARVEST_PASSWORD
@@ -62,7 +62,6 @@ module.exports = (robot) ->
     endDate = DateUtils.endDateFromRange(range)
     if startDate
       harvey.minutesPerUserInRange startDate, endDate, (err, data) ->
-        console.log(data)
-        # emote(robot, msg, data)
+        emote(robot, msg, data)
     else
       msg.send "Don't know what date to fetch"
