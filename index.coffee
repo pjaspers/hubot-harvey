@@ -37,9 +37,9 @@ emote = (robot, msg, data) ->
 
 displaySummary = (msg, data) ->
   for own date, users of data
-    msg.send date
-    for user in users
-      msg.send "  #{user.name} has #{user.minutes}"
+    users = for user in users
+      "#{user.name}: #{user.minutes}"
+    msg.send "#{date} => #{users.join("|")}"
 
 dateRangeFromMessage = (msg) ->
   # Let's assume: dd/mm/YYYY
