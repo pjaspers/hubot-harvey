@@ -51,18 +51,19 @@ dateRangeFromMessage = (msg) ->
 
 module.exports = (robot) ->
   robot.respond /(status\s)?(harvest|harvey)/i, (msg) ->
+    original_message = msg.message.text
     user_ids = process.env.ACTIVE_USER_IDS.split(",")
     email = process.env.HARVEST_EMAIL
     password = process.env.HARVEST_PASSWORD
     subdomain = process.env.HARVEST_SUBDOMAIN
     harvey = new Harvey(email, password, subdomain, user_ids)
 
-    range = dateRangeFromMessage(msg)
+    range = dateRangeFromMessage(original_message)
     startDate = DateUtils.startDateFromRange(range)
     endDate = DateUtils.endDateFromRange(range)
     if startDate
       harvey.minutesPerUserInRange startDate, endDate, (err, data) ->
-        if /\bme\b/.test(msg)
+        if /\bme\b/.test(original_message)
           console.log(data)
         else
           emote(robot, msg, data)
